@@ -70,4 +70,23 @@ export class SnakeWorldTest extends TestCase
         this.world.Update();
         Assert.AreEqualVec2(prePos,this.world.snake.head.position);
     }
+    @Test
+    testRestart()
+    {
+        let fp = this.world.food.position;
+        this.world.snake.Grow();
+        let input = this.world.input as UserInput;
+        input.Up();
+        this.world.Restart();
+        Assert.IsFalse(this.world.isFaild());
+        Assert.AreEqual(3, this.world.snake.count);
+        Assert.AreNotEqual(fp, this.world.food.position);
+        let id = 3;
+        for (const iterator of this.world.snake.head)
+        {
+            Assert.AreEqualVec2(new Vec2(--id, 0), iterator.position); 
+        }
+        Assert.AreEqual(this.world.snake, this.world.collider.snake);
+        Assert.AreEqualVec2(new Vec2(1, 0), this.world.input.getAxis());
+    }
 }

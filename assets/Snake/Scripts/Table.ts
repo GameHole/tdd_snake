@@ -6,7 +6,7 @@ export class Collider
 {
     private width: number;
     private height: number;
-    private snake: Snake;
+    public snake: Snake;
     private _table: Array<Array<number>>;
     getEmptyPoses()
     {
@@ -39,11 +39,10 @@ export class Collider
     {
         this.table[position.x][position.y] = value;
     }
-    constructor(width: number, height: number, snake: Snake)
+    constructor(width: number, height: number)
     {
         this.width = width;
         this.height = height;
-        this.snake = snake;
         this.initTable();
     }
     private initTable()

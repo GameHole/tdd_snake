@@ -4,6 +4,7 @@ import { TestCase } from "../ccUnit/TestCase";
 import { Test } from "../ccUnit/TestCollection/TestAttribbute";
 import { WaitEndOfFrame } from "../ccUnit/Waitings/WaitEndOfFrame";
 import { PrefabHelper } from "../Snake/Scripts/ResLoader/PrefabHelper";
+import { SceneHelper } from "../Snake/Scripts/SceneHelper";
 import { SnakeBodyView } from "../Snake/Scripts/Views/SnakeBodyView";
 
 export class PrefabHelperTest extends TestCase
@@ -21,7 +22,7 @@ export class PrefabHelperTest extends TestCase
         let instance = PrefabHelper.Instantiate("SnakeBody");
         Assert.AreNotEqual(null, instance);
         Assert.IsTrue(instance instanceof Node);
-        Assert.AreEqual(director.getScene() as any, instance.parent);
+        Assert.AreEqual(SceneHelper.getScene(), instance.parent);
         instance.destroy();
     }
     @Test

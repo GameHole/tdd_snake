@@ -3,6 +3,7 @@ import { Assert } from "../ccUnit/Assert";
 import { TestCase } from "../ccUnit/TestCase";
 import { Test } from "../ccUnit/TestCollection/TestAttribbute";
 import { WaitEndOfFrame } from "../ccUnit/Waitings/WaitEndOfFrame";
+import { SceneHelper } from "../Snake/Scripts/SceneHelper";
 
 export class NodeTest extends TestCase
 {  
@@ -18,8 +19,7 @@ export class NodeTest extends TestCase
     @Test
     async testNodeJoinToSceneDestroy()
     {
-        let node = new Node();
-        node.parent = director.getScene() as any;
+        let node = SceneHelper.NewNode();
         Assert.IsTrue(node.destroy());
         Assert.IsTrue(node.isValid);
         await new WaitEndOfFrame();

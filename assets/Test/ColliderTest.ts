@@ -7,79 +7,81 @@ import { Collider } from "../Snake/Scripts/Table";
 
 export class ColliderTest extends TestCase
 {
+    snake: Snake;
+    collider: Collider;
+    SetUp(): void
+    {
+        this.setUpInternal(5, 5, 3);
+    }
+    setUpInternal(w:number,h:number,s:number): void
+    {
+        this.snake = new Snake(s);
+        this.collider = new Collider(w, h);
+        this.collider.snake = this.snake;
+    }
     @Test
     testSnakeColliderBody()
     { 
-        let snake = new Snake(5);
-        let collider = new Collider(15,15,snake);
-        Assert.IsFalse(collider.containCollection());
-        snake.Move(new Vec2(0, 1));
-        snake.Move(new Vec2(-1, 0));
-        snake.Move(new Vec2(0, -1));
-        Assert.IsTrue(collider.containCollection());
+        this.setUpInternal(15,15,5)
+        Assert.IsFalse(this.collider.containCollection());
+        this.snake.Move(new Vec2(0, 1));
+        this.snake.Move(new Vec2(-1, 0));
+        this.snake.Move(new Vec2(0, -1));
+        Assert.IsTrue(this.collider.containCollection());
     }
     @Test
     testTable()
     { 
-        let snake = new Snake(3);
-        let collider = new Collider(5, 5, snake);
-        let tailpos = snake.tail.position;
-        collider.printSnakeWithoutHead();
-        Assert.AreEqual(1,collider.getValue(tailpos));
-        snake.Move(new Vec2(0, 1));
-        collider.printSnakeWithoutHead();
-        Assert.AreNotEqual(1,collider.getValue(tailpos));
+        let tailpos = this.snake.tail.position;
+        this.collider.printSnakeWithoutHead();
+        Assert.AreEqual(1,this.collider.getValue(tailpos));
+        this.snake.Move(new Vec2(0, 1));
+        this.collider.printSnakeWithoutHead();
+        Assert.AreNotEqual(1,this.collider.getValue(tailpos));
     }
     @Test
     testSnakeOutRangeMaxX()
     { 
-        let snake = new Snake(3);
-        let collider = new Collider(5,5,snake);
-        Assert.IsFalse(collider.containCollection());
+        Assert.IsFalse(this.collider.containCollection());
         for (let i = 0; i < 3; i++)
         {
-            snake.Move(new Vec2(1, 0));
+            this.snake.Move(new Vec2(1, 0));
         }
-        Assert.IsTrue(collider.containCollection());
+        Assert.IsTrue(this.collider.containCollection());
     }
     @Test
     testSnakeOutRangeMinX()
     { 
-        let snake = new Snake(3);
-        let collider = new Collider(5,5,snake);
-        Assert.IsFalse(collider.containCollection());
-        snake.Move(new Vec2(0, 1));
+        Assert.IsFalse(this.collider.containCollection());
+        this.snake.Move(new Vec2(0, 1));
         for (let i = 0; i < 3; i++)
         {
-            snake.Move(new Vec2(-1, 0));
+            this.snake.Move(new Vec2(-1, 0));
         }
-        Assert.IsTrue(collider.containCollection());
+        Assert.IsTrue(this.collider.containCollection());
     }
     @Test
     testSnakeOutRangeMinY()
     { 
-        let snake = new Snake(3);
-        let collider = new Collider(5,5,snake);
-        Assert.IsFalse(collider.containCollection());
-        snake.Move(new Vec2(0, -1));
-        Assert.IsTrue(collider.containCollection());
+        Assert.IsFalse(this.collider.containCollection());
+        this.snake.Move(new Vec2(0, -1));
+        Assert.IsTrue(this.collider.containCollection());
     }
     @Test
     testSnakeOutRangeMaxY()
     { 
-        let snake = new Snake(3);
-        let collider = new Collider(5, 1, snake);
-        Assert.IsFalse(collider.containCollection());
-        snake.Move(new Vec2(0, 1));
-        Assert.IsTrue(collider.containCollection());
+        Assert.IsFalse(this.collider.containCollection());
+        for (let i = 0; i < 5; i++)
+        {
+            this.snake.Move(new Vec2(0, 1));
+        }
+        Assert.IsTrue(this.collider.containCollection());
     } 
     @Test
     testEmptyPos()
     {
-        let snake = new Snake(3);
-        let table = new Collider(5, 5, snake);
-        let pos = table.getEmptyPoses();
-        for (const body of snake.head)
+        let pos = this.collider.getEmptyPoses();
+        for (const body of this.snake.head)
         {
             Assert.AreEqual(-1, pos.findIndex((v) => body.position.strictEquals(v)));
         }

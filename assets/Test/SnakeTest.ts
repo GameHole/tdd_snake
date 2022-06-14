@@ -53,4 +53,13 @@ export class SnakeTest extends TestCase
         Assert.AreEqual(4, snake.count);
         Assert.AreEqualVec2(new Vec2(1,0),snake.tail.position);
     }
+    @Test
+    testForbiddenSnakeReverseMove()
+    {
+        let snake = new Snake(3);
+        snake.Move(new Vec2(1, 0));
+        Assert.AreEqualVec2(new Vec2(3, 0), snake.head.position);
+        snake.Move(new Vec2(-1, 0));
+        Assert.AreEqualVec2(new Vec2(4, 0), snake.head.position);
+    }
 }

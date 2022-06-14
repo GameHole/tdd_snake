@@ -13,16 +13,17 @@ export class SnakeView extends Component
 	}
 	Destroy()
 	{
+		this.clear();
+		this.node.destroy();
+	}
+	clear()
+	{
 		for (const view of this._snakeBodys)
 		{
 			view.node.destroy();
 		}
-		this.clear();
-		this.node.destroy();
-	}
-	private clear()
-	{
 		this._snakeBodys.splice(0, this._snakeBodys.length);
+		this._snake = undefined;
 	}
 
 	getBodys(): Array<SnakeBodyView>
@@ -31,8 +32,8 @@ export class SnakeView extends Component
 	}
 	Set(snake: Snake)
 	{
-		this._snake = snake;
 		this.clear();
+		this._snake = snake;
 		for (const body of this._snake.head)
 		{
 			this.createBody(body);
@@ -49,9 +50,12 @@ export class SnakeView extends Component
 
 	update(deltaTime: number)
 	{
-		if (this._snakeBodys.length != this._snake.count)
+		if (this._snake)
 		{
-			this.createBody(this._snake.tail);
+			if (this._snakeBodys.length != this._snake.count)
+			{
+				this.createBody(this._snake.tail);
+			}
 		}
 	}
 }

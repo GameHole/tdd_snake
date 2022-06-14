@@ -5,6 +5,10 @@ const { ccclass, property } = _decorator;
 @ccclass('KeyInput')
 export class KeyInput extends Component implements IInput
 {
+	Reset()
+	{
+		this._input.Reset();
+	}
 	private _input: UserInput = new UserInput();
 	getAxis(): Vec2
 	{

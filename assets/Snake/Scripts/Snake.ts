@@ -4,6 +4,7 @@ export class Snake
 {
     head: SnakeBody;
     tail: SnakeBody;
+    private preDir: Vec2;
     private _count: number;
     get count(): number
     {
@@ -38,7 +39,8 @@ export class Snake
     }
     Move(dir: Vec2)
     {
-        this.head.MoveByDir(dir);
+        this.VailedDir(dir);
+        this.head.MoveByDir(this.preDir);
         let preBody: SnakeBody = this.head;
         let body: SnakeBody = this.head.next;
         while (body != undefined)
@@ -47,6 +49,11 @@ export class Snake
             body = body.next;
             preBody = preBody.next;
         }
+    }
+    private VailedDir(dir: Vec2)
+    {
+        if (!this.preDir || this.preDir.dot(dir) >= 0)
+            this.preDir = dir;
     }
     Grow()
     {

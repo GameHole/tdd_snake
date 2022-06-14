@@ -1,4 +1,5 @@
 import { director, instantiate, Prefab,Node, Component } from "cc";
+import { SceneHelper } from "../SceneHelper";
 import { SnakeBodyView } from "../Views/SnakeBodyView";
 import { ResProvider } from "./ResProvider";
 
@@ -17,7 +18,7 @@ export class PrefabHelper
         if (!prefab)
             return null;
         let clone = instantiate(prefab);
-        clone.parent = director.getScene() as any;
+        clone.parent = SceneHelper.getScene();
         return clone;
     }
     private static _provider: ResProvider;

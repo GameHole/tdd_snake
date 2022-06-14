@@ -4,7 +4,9 @@ import { TestCase } from "../ccUnit/TestCase";
 import { Test } from "../ccUnit/TestCollection/TestAttribbute";
 import { WaitEndOfFrame } from "../ccUnit/Waitings/WaitEndOfFrame";
 import { WaitForSeconds } from "../ccUnit/Waitings/WaitForSeconds";
+import { SceneHelper } from "../Snake/Scripts/SceneHelper";
 import { SnakeDriver } from "../Snake/Scripts/SnakeDriver";
+import { RestartTipView } from "../Snake/Scripts/Views/RestartTipView";
 
 export class TestSnakeDriver extends TestCase
 {    
@@ -12,7 +14,6 @@ export class TestSnakeDriver extends TestCase
     SetUp(): void
     {
         let node = new Node();
-        node.parent = director.getScene() as any;
         this.driver = node.addComponent(SnakeDriver);
     }
     TearDown(): void
@@ -20,7 +21,7 @@ export class TestSnakeDriver extends TestCase
         this.driver.node.destroy();
     }
     @Test
-    async testDriverStart()
+    testDriverStart()
     {
         Assert.AreEqual(15, this.driver.width);
         Assert.AreEqual(15, this.driver.height);
@@ -29,41 +30,81 @@ export class TestSnakeDriver extends TestCase
         Assert.AreEqual(undefined, this.driver.snakeView);
         Assert.AreEqual(undefined, this.driver.areaView);
         Assert.AreEqual(undefined, this.driver.foodView);
-        await new WaitEndOfFrame();
+        this.driver.start();
         Assert.AreNotEqual(undefined, this.driver.world);
         Assert.AreNotEqual(undefined, this.driver.snakeView);
         Assert.AreNotEqual(undefined, this.driver.snakeView.snake);
         Assert.AreNotEqual(undefined, this.driver.areaView);
         Assert.AreNotEqual(undefined, this.driver.foodView);
-        await new WaitEndOfFrame();
+        Assert.AreNotEqual(undefined, this.driver.tip);
+        Assert.AreEqual("() => this.Restart()", String(this.driver.tip.onClick));
+        this.driver.update(0.01);
         Assert.AreEqualVec2(this.driver.world.food.position, this.driver.foodView.position);
     }
     @Test
-    async testDriverTimer()
+    testDriverSpeed()
     {
+        this.driver.start();
+        Assert.AreEqual(this.driver.updateDuration, this.driver.runtimeDuration);
+        this.driver.world.snake.Grow();
+        this.driver.update(0.01);
+        Assert.AreEqual(0.99, this.driver.runtimeDuration);
+        this.driver.world.snake.Grow();
+        this.driver.update(0.01);
+        Assert.AreEqual(0.98, this.driver.runtimeDuration);
+    }
+    @Test
+    testDriverTimer()
+    {
+        this.driver.start();
         Assert.AreEqual(0, this.driver.dt);
         Assert.AreEqual(1, this.driver.updateDuration);
-        await new WaitEndOfFrame();
-        Assert.IsTrue(this.driver.dt > 0 && this.driver.dt < 1);
+        this.driver.update(0.01);
+        Assert.AreEqual(0.01, this.driver.dt);
     }
     @Test
     async testFoodEated()
     {
-        await new WaitEndOfFrame();
+        this.driver.start();
         this.driver.world.food.position = new Vec2(2, 0);
         await new WaitEndOfFrame();
+        this.driver.update(0.01);
         Assert.AreEqualVec2(this.driver.world.food.position, this.driver.foodView.position);
     }
     @Test
-    async testDriverTimerReset()
+    testDriverTimerReset()
     {
-        await new WaitForSeconds(this.driver.updateDuration);
+        this.driver.start();
+        this.driver.runtimeDuration = 0.5;
+        this.driver.update(this.driver.runtimeDuration);
         Assert.AreEqual(0,this.driver.dt);
     }
     @Test
-    async testDriverUpdateWorld()
+    testDriverUpdateWorld()
     {
-        await new WaitForSeconds(this.driver.updateDuration);
+        this.driver.start();
+        this.driver.runtimeDuration = 0.5;
+        this.driver.update(this.driver.runtimeDuration);
         Assert.AreEqualVec2(new Vec2(3, 0), this.driver.world.snake.head.position);
+    }
+    @Test
+    testRestart()
+    {
+        this.driver.start();
+        this.driver.runtimeDuration = 0.5;
+        this.driver.Restart();
+        Assert.AreEqual(this.driver.world.snake, this.driver.snakeView.snake);
+        Assert.AreEqual(this.driver.updateDuration, this.driver.runtimeDuration);
+    }
+    @Test
+    testShowRestartTip()
+    {
+        let dia = SceneHelper.GetFirstCmp(RestartTipView);
+        Assert.IsFalse(dia.active);
+        this.driver.width = this.driver.height = this.driver.snakeCount - 1;
+        this.driver.start();
+        this.driver.update(0.1);
+        Assert.IsTrue(this.driver.world.isFaild());
+        Assert.IsTrue(dia.active);
     }
 }

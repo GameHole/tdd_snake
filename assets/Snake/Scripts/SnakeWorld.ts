@@ -11,12 +11,13 @@ export class SnakeWorld
     collider: Collider;
     snake: Snake;
     food: Food = new Food();
+    private snakeCount: number;
     constructor(width: number, height: number, snakeCount: number, input: IInput)
     {
-        this.snake = new Snake(snakeCount);
-        this.collider = new Collider(width, height, this.snake);
+        this.snakeCount = snakeCount;
         this.input = input;
-        this.food = this.CreateFood();
+        this.collider = new Collider(width, height);
+        this.Restart();
     }
     isEat(): boolean
     {
@@ -43,4 +44,11 @@ export class SnakeWorld
             this.food = this.CreateFood();
         }
     }
+    Restart()
+	{
+        this.snake = new Snake(this.snakeCount);
+        this.collider.snake = this.snake;
+        this.CreateFood();
+        this.input.Reset();
+	}
 }

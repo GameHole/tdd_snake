@@ -3,6 +3,7 @@ import { Assert } from "../ccUnit/Assert";
 import { TestCase } from "../ccUnit/TestCase";
 import { Test } from "../ccUnit/TestCollection/TestAttribbute";
 import { WaitEndOfFrame } from "../ccUnit/Waitings/WaitEndOfFrame";
+import { SceneHelper } from "../Snake/Scripts/SceneHelper";
 import { Snake } from "../Snake/Scripts/Snake";
 import { Transformer } from "../Snake/Scripts/Transformer";
 import { SnakeBodyView } from "../Snake/Scripts/Views/SnakeBodyView";
@@ -15,8 +16,7 @@ export class SnakeViewTest extends TestCase
     SetUp(): void
     {
         this.snake = new Snake(3);
-        let node = new Node();
-        node.parent = director.getScene() as any;
+        let node = SceneHelper.NewNode();
         this.view = node.addComponent(SnakeView);
         this.view.Set(this.snake);
     }
@@ -27,8 +27,17 @@ export class SnakeViewTest extends TestCase
     @Test
     async testSnakeViewDestroy()
     {
-        let node = new Node();
-        node.parent = director.getScene() as any;
+        let node = SceneHelper.NewNode();
+        let view = node.addComponent(SnakeView);
+        view.Set(new Snake(3));
+        view.Destroy();
+        await new WaitEndOfFrame();
+        Assert.IsFalse(view.isValid);
+    }
+    @Test
+    async testClear()
+    {
+        let node = SceneHelper.NewNode();
         let view = node.addComponent(SnakeView);
         view.Set(new Snake(3));
         let orgion = new Array<SnakeBodyView>();
@@ -36,14 +45,24 @@ export class SnakeViewTest extends TestCase
         {
             orgion.push(iterator);
         }
-        view.Destroy();
+        view.clear();
         Assert.AreEqual(0, view.getBodys().length);
+        Assert.AreEqual(undefined, view.snake);
         await new WaitEndOfFrame();
-        Assert.IsFalse(view.isValid);
         for (const iterator of orgion)
         {
             Assert.IsTrue(iterator.isDestroyed);
         }
+        view.Destroy();
+    }
+    @Test
+    async testSetSnake()
+    {
+        let node = SceneHelper.NewNode();
+        let view = node.addComponent(SnakeView);
+        view.Set(new Snake(3));
+        view.Set(new Snake(4));
+        Assert.AreEqual(4, view.getBodys().length);
     }
     @Test
     testSnakeView()

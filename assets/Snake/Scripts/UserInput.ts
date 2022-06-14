@@ -1,9 +1,14 @@
 import { Vec2 } from "cc";
+import { IInput } from "./IInput";
 
-export class UserInput
+export class UserInput implements IInput
 {
     private _axis: Vec2;
     constructor()
+    {
+        this.Right();
+    }
+    Reset()
     {
         this.Right();
     }
